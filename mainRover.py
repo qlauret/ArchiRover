@@ -11,6 +11,13 @@ if __name__ == "__main__":
             "last_position": {"x":2,"y":6,"o":"W"},
             "error": { "type":"obstacle", "message":"Obstacle on way !", "obstacle_position": {"x":1,"y":6}}
         }
+        feedback_test_good = {
+            "status": True,
+            "log_movment": [{"x":2,"y":5,"o":"N"},{"x":2,"y":6,"o":"N"},{"x":2,"y":6,"o":"W"}],
+            "last_position": {"x":2,"y":6,"o":"W"},
+            "error": {}
+        }
+        
         # Le fichier B reçoit des données
         time.sleep(2)
         receiver = SocketAdapter()

@@ -21,11 +21,24 @@ class Cartographie:
         print("|        O         O    |")
         print(" ----------------------- ")
 
-    def processResponse(self, responseString):
-        print(f"response ROVER: {responseString}")
+    def processResponse(self, responseJson):
+        #print(f"response ROVER: {responseJson}")
+        if "feedback" in responseJson and responseJson["feedback"]:
+            data = responseJson["feedback"]
+            last_position = data["last_position"]
+            log_movment = data["log_movment"]
+            error = data["error"] if data["status"] else False
+            if error and error["type"] == "obstacle":
+                print(f"ERRROR {error['message']}")
+                obstacle_position = error["obstacle_position"]
+                #A FINIR : ajouter l'obstacle si en a un + sauvgarder les déplacements du rover
+        
+                
+                
+                
         
         
-    def split(responseString):
+    def split(self,responseString):
         subStrings = responseString.split("|")
         for subString in subStrings:
             elements = subString.split(",")
