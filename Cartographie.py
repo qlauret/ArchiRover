@@ -1,4 +1,5 @@
-from MissionControl import *
+from Point import Point
+
 
 class Cartographie:
     def __init__(self):
@@ -21,7 +22,10 @@ class Cartographie:
         print(" ----------------------- ")
 
     def processResponse(self, responseString):
-        print(f"response: {responseString}")
+        print(f"response ROVER: {responseString}")
+        
+        
+    def split(responseString):
         subStrings = responseString.split("|")
         for subString in subStrings:
             elements = subString.split(",")
