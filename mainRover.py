@@ -8,8 +8,28 @@ from mainTopologie import *
 def main():
     print("MAIN ROVER LAUNCHED")
     Mars = initPlanet()
-    
-    Curiosity = Rover(Mars, Point(2, 5))
+    #POSITION X
+    while True:
+        try:
+            posX = int(input("Entrez la position X du Rover : "))
+            if posX not in range(1,Mars.width):
+                print("La position X du Rover doit être comprise entre 1 et %s." % Mars.width)
+            else:
+                break
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
+    #POSITION Y
+    while True:
+        try:
+            posY = int(input("Entrez la position Y du Rover : "))
+            if posY not in range(1,Mars.height):
+                print("La position Y du Rover doit être comprise entre 1 et %s." % Mars.height)
+            else:
+                break
+        except ValueError:
+            print("Veuillez entrer un nombre valide.")
+            
+    Curiosity = Rover(Mars, Point(posX, posY))
     print("INIT ROVER OK")
     
     while True:

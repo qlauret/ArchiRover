@@ -8,12 +8,12 @@ class Rover:
         self.planet = planet
         self.cardinal = cardinal
 
-        if position_on_planet.x not in range(1, planet.width + 1):
-            print("ERROR: la position X du rover n'est pas sur la planète !")
-        if position_on_planet.y not in range(1, planet.height + 1):
-            print("ERROR: la position Y du rover n'est pas sur la planète !")
+        if position_on_planet.x not in range(1, planet.width):
+            raise ValueError("ERROR: la position X du rover n'est pas sur la planète !")
+        if position_on_planet.y not in range(1, planet.height):
+            raise ValueError("ERROR: la position Y du rover n'est pas sur la planète !")
         if self.check_obstacle():
-            print("ERROR: le rover est sur un obstacle !")
+            raise ValueError("ERROR: le rover est sur un obstacle !")
         self.show_positioning()
     
     def deplacer(self, en_avant: bool):
