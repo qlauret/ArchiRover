@@ -3,7 +3,7 @@ from Planete import PlaneteToroidale
 from Point import Point
 
 class Rover:
-    def __init__(self,planet: PlaneteToroidale, position_on_planet: Point = Point(1, 1), cardinal: Cardinal = Cardinal()):
+    def __init__(self,planet: PlaneteToroidale, position_on_planet: Point = Point(2, 2), cardinal: Cardinal = Cardinal()):
         self.point = position_on_planet
         self.planet = planet
         self.cardinal = cardinal
