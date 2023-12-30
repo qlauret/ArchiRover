@@ -1,3 +1,4 @@
+import sys
 import time
 from Cartographie import Cartographie
 from SocketAdapter import SocketAdapter
@@ -85,9 +86,10 @@ class MissionControl:
                     print(f"\n-- Désolé, la commande {char} n'est pas reconnue. --")
             
             if final_commands and self.cmdQuitter not in final_commands:
-                print("ENVOI DES INSTRUCTIONS AU ROVER")
+                print("ENVOI DES INSTRUCTIONS AU ROVER..")
                 self.clearConsole()
                 data_to_send = {'command': final_commands}
+                # time.sleep(1)
                 sender = SocketAdapter()
                 sender.dataSender(data_to_send)
                 time.sleep(1)
@@ -119,7 +121,7 @@ class MissionControl:
 
     def exitProgramm(self, message):
         print(message)
-        exit(0)
+        sys.exit()
 
     def clearConsole(self):
         #import os

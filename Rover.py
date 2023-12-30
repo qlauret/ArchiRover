@@ -53,7 +53,6 @@ class Rover:
     def check_obstacle(self):
         for obstacle in self.planet.obstacle_on_planet:
             if obstacle.point.isEqual(self.point):
-                print("** IL y a un obstacle sur votre chemin **")
                 return True
         return False
         
