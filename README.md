@@ -18,3 +18,9 @@
   - Suivre les instructions indiquées sur le menu.
 
   - Vous pouvez envoyer des instructions au rover ou bien visualiser par où le rover est passé
+
+
+Notre archi cible:
+
+
+![image](https://github.com/qlauret/ArchiRover/assets/143949889/8cbdb849-a1d1-47b7-ac4c-febb846c3f44)
