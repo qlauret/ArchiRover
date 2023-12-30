@@ -1,5 +1,5 @@
 import time
-import Cartographie
+from Cartographie import Cartographie
 from SocketAdapter import SocketAdapter
 
 class MissionControl:
@@ -85,8 +85,8 @@ class MissionControl:
                     print(f"\n-- Désolé, la commande {char} n'est pas reconnue. --")
             
             if final_commands and self.cmdQuitter not in final_commands:
-                self.clearConsole()
                 print("ENVOI DES INSTRUCTIONS AU ROVER")
+                self.clearConsole()
                 data_to_send = {'command': final_commands}
                 sender = SocketAdapter()
                 sender.dataSender(data_to_send)
@@ -96,7 +96,6 @@ class MissionControl:
         self.waitingResponse()
 
     def cartographieInterface(self):
-        print("AFFICHER LA CARTOGRAPHIE")
         self.carto.displayCarto()
 
     def firstInterface(self):
@@ -123,7 +122,6 @@ class MissionControl:
         exit(0)
 
     def clearConsole(self):
-        # On peut effacer le terminal en utilisant la commande système "clear"
         #import os
         #os.system('clear')
         print("\n")

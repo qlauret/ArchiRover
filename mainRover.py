@@ -1,31 +1,60 @@
-
-# Exemple d'utilisation
-from SocketAdapter import SocketAdapter
 import time
+from Cardinal import Cardinal
+from Point import Point
+from Rover import Rover
+from SocketAdapter import SocketAdapter
+from mainTopologie import *
 
-if __name__ == "__main__":
+def main():
+    print("MAIN ROVER LAUNCHED")
+    Mars = initPlanet()
+    
+    Curiosity = Rover(Mars, Point(2, 5))
+    print("INIT ROVER OK")
+    
     while True:
-        feedback_test = {
-            "status": False,
-            "log_movment": [{"x":2,"y":5,"o":"N"},{"x":2,"y":6,"o":"N"},{"x":2,"y":6,"o":"W"}],
-            "last_position": {"x":2,"y":6,"o":"W"},
-            "error": { "type":"obstacle", "message":"Obstacle on way !", "obstacle_position": {"x":1,"y":6}}
-        }
-        feedback_test_good = {
-            "status": True,
-            "log_movment": [{"x":2,"y":5,"o":"N"},{"x":2,"y":6,"o":"N"},{"x":2,"y":6,"o":"W"}],
-            "last_position": {"x":2,"y":6,"o":"W"},
-            "error": {}
-        }
-        
-        # Le fichier B reçoit des données
-        time.sleep(2)
         receiver = SocketAdapter()
         received_data = receiver.dataReceiver()
         print("Données reçues:", received_data)
         
-        time.sleep(2)
-        if received_data:
-            data_to_send = {'feedback': feedback_test}
+        
+        if received_data.get('command'):
+            feedback = {
+                "status": True,
+                "log_movement": [{"x":Curiosity.point.x,"y":Curiosity.point.y,"o":Curiosity.cardinal.direction.value}],
+                "error": {}
+            }
+            for char in received_data.get('command'):
+                #Interpréter les commandes reçues
+                if char == "Z":
+                    infosBack = Curiosity.deplacer(en_avant=True)
+                elif char == "S":
+                    infosBack = Curiosity.deplacer(en_avant=False)
+                elif char == "D":
+                    infosBack = Curiosity.tourner(a_droite=True)
+                elif char == "Q":
+                    infosBack = Curiosity.tourner(a_droite=False)
+                    
+                #Ajouter les infos de retour du Rover dans le feedback
+                if infosBack and "status" in infosBack and infosBack["status"]:
+                    #Status infosBack est True
+                    feedback["log_movement"].append(infosBack.get("movement"))
+                elif infosBack and "status" in infosBack and not infosBack["status"]:
+                    #Status infosBack est False
+                    feedback["status"] = False
+                    feedback["error"] = infosBack.get("message")
+                    break
+                else:
+                    feedback["status"] = False
+                    feedback["error"] = {"type":"unknown", "message":"Unknown error"}
+                    break
+            print("ENVOIE EN COURS ..")
+            time.sleep(2)
+            # on renvoie les données à la Mission Control
             sender = SocketAdapter()
-            sender.dataSender(data_to_send)
+            sender.dataSender(feedback)
+            time.sleep(2)
+       
+if __name__ == "__main__":
+    main()
+             

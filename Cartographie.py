@@ -1,86 +1,65 @@
 from Point import Point
-
+from Cardinal import Cardinal
 
 class Cartographie:
     def __init__(self):
         self.tailleX = 10
         self.tailleY = 10
-        self.roverLastPosition = Point(3, 4)
-        self.roverLastOrientation = "Est"
+        self.roverLastPosition = Point(0, 0)
+        self.roverLastOrientation = Cardinal.direction.North
         self.listObstacles = []
         self.listPointsVisited = []
 
-    def displayCarto(self):
-        print(" _______________________ ")
-        print("|O   O          O       |")
-        print("|O        O     O       |")
-        print("|    O                 O|")
-        print("|       V       O       |")
-        print("|     O        O        |")
-        print("|                       |")
-        print("|        O         O    |")
-        print(" ----------------------- ")
-
+    
     def processResponse(self, responseJson):
-        #print(f"response ROVER: {responseJson}")
-        if "feedback" in responseJson and responseJson["feedback"]:
-            data = responseJson["feedback"]
-            last_position = data["last_position"]
-            log_movment = data["log_movment"]
-            error = data["error"] if data["status"] else False
-            if error and error["type"] == "obstacle":
-                print(f"ERRROR {error['message']}")
-                obstacle_position = error["obstacle_position"]
-                #A FINIR : ajouter l'obstacle si en a un + sauvgarder les déplacements du rover
+        status = responseJson["status"]
+        log_movement = responseJson["log_movement"]
         
-                
-                
-                
-        
-        
-    def split(self,responseString):
-        subStrings = responseString.split("|")
-        for subString in subStrings:
-            elements = subString.split(",")
-            if 3 <= len(elements) <= 4:
-                pos_x = elements[0]
-                pos_y = elements[1]
-                orientation = elements[2]
-                isObstacle = False
-                if len(elements) == 4:
-                    if elements[3] == "X":
-                        isObstacle = True
-                # ENREGISTRER LA POSITION ET L'OBSCTACLE
-                int_x, int_y = int(pos_x), int(pos_y)
-                if isObstacle:
-                    print(f"AJOUT OBSTACLE SUR {pos_x},{pos_y}")
-                    self.listObstacles.append((int_x, int_y))
-                else:
-                    print(f"SAVE PASSAGE rover: {pos_x},{pos_y} ->{orientation}")
-                    self.roverLastPosition = (int_x, int_y)
-                    self.roverLastOrientation = orientation
-                    self.listPointsVisited.append(self.roverLastPosition)
-            else:
-                print("NON RECONNU")
+        # On met à jour la liste des points visités
+        for point in log_movement:
+            new_point = Point(point["x"], point["y"])
+            if not self.is_point_visited(new_point):
+                self.listPointsVisited.append(new_point)
+        if status:
+            # On met à jour la position et l'orientation du rover
+            last_position = responseJson["log_movement"][-1]
+            self.roverLastPosition = Point(last_position["x"], last_position["y"])
+            self.roverLastOrientation = Cardinal.direction.fromValue(last_position["o"])
 
-    def stringOrientationToCardinal(self, orientation):
-        if orientation == "North":
-            return "Nord"
-        elif orientation == "East":
-            return "Est"
-        elif orientation == "West":
-            return "Ouest"
-        elif orientation == "South":
-            return "South"
         else:
-            return "Nord"
+            # Si le déplacement a échoué, on enregistre l'obstacle
+            error = responseJson["error"]
+            if error["type"] == "obstacle":
+                obstacle_position = Point(error["obstacle_position"]["x"], error["obstacle_position"]["y"])
+                if not self.is_obstacle(obstacle_position):
+                    self.listObstacles.append(obstacle_position)
+
+    def is_point_visited(self, point):
+        for visited_point in self.listPointsVisited:
+            if visited_point.isEqual(point):
+                return True
+        return False
+
+    def is_obstacle(self, obstacle):
+        for obstacle_point in self.listObstacles:
+            if obstacle_point.isEqual(obstacle):
+                return True
+        return False
+                
+                
+    def displayCarto(self):
+        print(" *** CARTOGRAPHIE *** ")
+        print("visited: %s" % [point.to_dict() for point in self.listPointsVisited])
+        print("obstacles: %s" % [obstacle.to_dict() for obstacle in self.listObstacles])
+        print("rover: %s %s" % (self.cardinalToString(self.roverLastOrientation.value), self.roverLastPosition.to_dict()))
+
 
     def cardinalToString(self, cardinal):
-        if cardinal == "Nord":
+        if cardinal == "N":
             return "^"
-        elif cardinal == "Est":
+        elif cardinal == "E":
             return ">"
-        elif cardinal == "South":
+        elif cardinal == "S":
             return "V"
-        elif cardinal == "Ouest":
+        elif cardinal == "W":
             return "<"
